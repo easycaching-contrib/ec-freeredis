@@ -1,0 +1,2 @@
+# ec-freeredis
+EasyCaching ❤️ FreeRedis
