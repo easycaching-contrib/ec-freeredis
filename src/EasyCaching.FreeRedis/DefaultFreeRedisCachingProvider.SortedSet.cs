@@ -77,6 +77,17 @@
             throw new NotImplementedException();
         }
 
+        public long ZRangeRemByScore(string cacheKey, double min, double max)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<long> ZRangeRemByScoreAsync(string cacheKey, double min, double max)
+        {
+            throw new NotImplementedException();
+        }
+
+
         public long? ZRank<T>(string cacheKey, T cacheValue)
         {
             throw new NotImplementedException();

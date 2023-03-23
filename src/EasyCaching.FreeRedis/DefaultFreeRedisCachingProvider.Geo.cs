@@ -1,6 +1,7 @@
 ﻿namespace EasyCaching.FreeRedis
 {
     using EasyCaching.Core;
+    using global::FreeRedis;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -12,7 +13,7 @@
             throw new NotImplementedException();
         }
 
-        public Task<long> GeoAddAsync(string cacheKey, List<(double longitude, double latitude, string member)> values)
+        public async Task<long> GeoAddAsync(string cacheKey, List<(double longitude, double latitude, string member)> values)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +23,7 @@
             throw new NotImplementedException();
         }
 
-        public Task<double?> GeoDistAsync(string cacheKey, string member1, string member2, string unit = "m")
+        public async Task<double?> GeoDistAsync(string cacheKey, string member1, string member2, string unit = "m")
         {
             throw new NotImplementedException();
         }
@@ -32,7 +33,7 @@
             throw new NotImplementedException();
         }
 
-        public Task<List<string>> GeoHashAsync(string cacheKey, List<string> members)
+        public async Task<List<string>> GeoHashAsync(string cacheKey, List<string> members)
         {
             throw new NotImplementedException();
         }
@@ -42,7 +43,12 @@
             throw new NotImplementedException();
         }
 
-        public Task<List<(decimal longitude, decimal latitude)?>> GeoPosAsync(string cacheKey, List<string> members)
+        public async Task<List<(decimal longitude, decimal latitude)?>> GeoPosAsync(string cacheKey, List<string> members)
+        {
+            throw new NotImplementedException();
+        }
+
+        private GeoUnit GetGeoUnit(string unit)
         {
             throw new NotImplementedException();
         }

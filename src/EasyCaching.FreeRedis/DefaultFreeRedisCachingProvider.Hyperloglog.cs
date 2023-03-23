@@ -12,7 +12,7 @@
             throw new NotImplementedException();
         }
 
-        public Task<bool> PfAddAsync<T>(string cacheKey, List<T> values)
+        public async Task<bool> PfAddAsync<T>(string cacheKey, List<T> values)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@
             throw new NotImplementedException();
         }
 
-        public Task<long> PfCountAsync(List<string> cacheKeys)
+        public async Task<long> PfCountAsync(List<string> cacheKeys)
         {
             throw new NotImplementedException();
         }
@@ -32,7 +32,7 @@
             throw new NotImplementedException();
         }
 
-        public Task<bool> PfMergeAsync(string destKey, List<string> sourceKeys)
+        public async Task<bool> PfMergeAsync(string destKey, List<string> sourceKeys)
         {
             throw new NotImplementedException();
         }

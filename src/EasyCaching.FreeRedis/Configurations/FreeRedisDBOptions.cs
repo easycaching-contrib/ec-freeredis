@@ -18,5 +18,10 @@
         public List<string> Sentinels { get; set; }
 
         public bool RwSplitting { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Redis database KeyPrefix will use.
+        /// </summary>
+        public string KeyPrefix { get; set; }
     }
 }

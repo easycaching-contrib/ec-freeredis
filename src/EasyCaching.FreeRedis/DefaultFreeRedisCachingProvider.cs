@@ -172,6 +172,24 @@
             return result;
         }
 
+        /// <summary>
+        /// Gets all keys by prefix.
+        /// </summary>
+        /// <param name="prefix">Prefix</param>
+        /// <returns>The all keys by prefix.</returns>
+        public override IEnumerable<string> BaseGetAllKeysByPrefix(string prefix)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(prefix, nameof(prefix));
+
+            prefix = this.HandlePrefix(prefix);
+
+            var redisKeys = this.GetAllRedisKeys(prefix);
+
+            var result = redisKeys?.Select(key => (string)key)?.Distinct();
+
+            return result;
+        }
+
         public override IDictionary<string, CacheValue<T>> BaseGetByPrefix<T>(string prefix)
         {
             ArgumentCheck.NotNullOrWhiteSpace(prefix, nameof(prefix));
@@ -215,7 +233,7 @@
             return this.SearchRedisKeys(this.HandlePrefix(prefix)).Length;
         }
 
-        public override object BaseGetDatabse() => _cache;
+        public override object BaseGetDatabase() => _cache;
 
         public override TimeSpan BaseGetExpiration(string cacheKey)
         {
@@ -308,6 +326,43 @@
                 (int)expiration.TotalSeconds);
         }
 
+        /// <summary>
+        /// Removes cached item by pattern async.
+        /// </summary>
+        /// <param name="pattern">Pattern of CacheKey.</param>
+        public override void BaseRemoveByPattern(string pattern)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(pattern, nameof(pattern));
+
+            pattern = this.HandleKeyPattern(pattern);
+
+            if (_options.EnableLogging)
+                _logger?.LogInformation($"RemoveByPattern : pattern = {pattern}");
+
+            var redisKeys = this.SearchRedisKeys(pattern);
+
+            foreach (var item in redisKeys)
+            {
+                _cache.Del(item);
+            }
+        }
+
+        /// <summary>
+        /// Handles the pattern of CacheKey.
+        /// </summary>
+        /// <param name="pattern">Pattern of CacheKey.</param>
+        private string HandleKeyPattern(string pattern)
+        {
+            // Forbid
+            if (pattern.Equals("*"))
+                throw new ArgumentException("the pattern should not equal to *");
+
+            if (!string.IsNullOrWhiteSpace(_options.DBConfig.KeyPrefix))
+                pattern = _options.DBConfig.KeyPrefix + pattern;
+
+            return pattern;
+        }
+
         private string HandlePrefix(string prefix)
         {
             // Forbid
@@ -328,6 +383,11 @@
                 prefix = tmp;
 
             return prefix;
+        }
+
+        private string[] GetAllRedisKeys(string pattern)
+        {
+          throw new NotImplementedException();
         }
 
         private string[] SearchRedisKeys(string pattern)
