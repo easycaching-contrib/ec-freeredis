@@ -20,7 +20,28 @@
         /// <param name="cancellationToken">CancellationToken</param>
         public override async Task<object> BaseGetAsync(string cacheKey, Type type, CancellationToken cancellationToken = default)
         {
-          throw new NotImplementedException();
+         ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var result = await _cache.GetAsync<byte[]>(cacheKey);
+            if (result != null)
+            {
+                CacheStats.OnHit();
+
+                if (_options.EnableLogging)
+                    _logger?.LogInformation($"Cache Hit : cachekey = {cacheKey}");
+
+                var value = _serializer.Deserialize(result, type);
+                return value;
+            }
+            else
+            {
+                CacheStats.OnMiss();
+
+                if (_options.EnableLogging)
+                    _logger?.LogInformation($"Cache Missed : cachekey = {cacheKey}");
+
+                return null;
+            }
         }
 
         /// <summary>
@@ -34,7 +55,48 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override async Task<CacheValue<T>> BaseGetAsync<T>(string cacheKey, Func<Task<T>> dataRetriever, TimeSpan expiration, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNegativeOrZero(expiration, nameof(expiration));
+
+            var result = await _cache.GetAsync<byte[]>(cacheKey);
+            if (result != null)
+            {
+                CacheStats.OnHit();
+
+                if (_options.EnableLogging)
+                    _logger?.LogInformation($"Cache Hit : cachekey = {cacheKey}");
+
+                var value = _serializer.Deserialize<T>(result);
+                return new CacheValue<T>(value, true);
+            }
+
+            CacheStats.OnMiss();
+
+            if (_options.EnableLogging)
+                _logger?.LogInformation($"Cache Missed : cachekey = {cacheKey}");
+
+            var flag = await _cache.SetNxAsync($"{cacheKey}_Lock", 1, (int)TimeSpan.FromMilliseconds(_options.LockMs).TotalSeconds);
+
+            if (!flag)
+            {
+                await Task.Delay(_options.SleepMs);
+                return await GetAsync(cacheKey, dataRetriever, expiration);
+            }
+
+            var item = await dataRetriever();
+            if (item != null || _options.CacheNulls)
+            {
+                await SetAsync(cacheKey, item, expiration);
+                //remove mutex key
+                await _cache.DelAsync($"{cacheKey}_Lock");
+                return new CacheValue<T>(item, true);
+            }
+            else
+            {
+                //remove mutex key
+                await _cache.DelAsync($"{cacheKey}_Lock");
+                return CacheValue<T>.NoValue;
+            }
         }
 
         /// <summary>
@@ -46,7 +108,28 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override async Task<CacheValue<T>> BaseGetAsync<T>(string cacheKey, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var result = await _cache.GetAsync<byte[]>(cacheKey);
+            if (result != null)
+            {
+                CacheStats.OnHit();
+
+                if (_options.EnableLogging)
+                    _logger?.LogInformation($"Cache Hit : cachekey = {cacheKey}");
+
+                var value = _serializer.Deserialize<T>(result);
+                return new CacheValue<T>(value, true);
+            }
+            else
+            {
+                CacheStats.OnMiss();
+
+                if (_options.EnableLogging)
+                    _logger?.LogInformation($"Cache Missed : cachekey = {cacheKey}");
+
+                return CacheValue<T>.NoValue;
+            }
         }
 
         /// <summary>
@@ -68,7 +151,9 @@
         /// <param name="cancellationToken">CancellationToken</param>
         public override async Task BaseRemoveAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            await _cache.DelAsync(cacheKey);
         }
 
         /// <summary>
@@ -82,7 +167,23 @@
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override async Task BaseSetAsync<T>(string cacheKey, T cacheValue, TimeSpan expiration, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNull(cacheValue, nameof(cacheValue), _options.CacheNulls);
+            ArgumentCheck.NotNegativeOrZero(expiration, nameof(expiration));
+
+            if (MaxRdSecond > 0)
+            {
+                var addSec = new Random().Next(1, MaxRdSecond);
+                expiration = expiration.Add(TimeSpan.FromSeconds(addSec));
+            }
+
+            var val = _serializer.Serialize(cacheValue);
+
+            await _cache.SetAsync(
+                cacheKey,
+                val,
+                (int)expiration.TotalSeconds
+                );
         }
 
         /// <summary>
@@ -113,7 +214,23 @@
         /// <param name="cancellationToken">CancellationToken</param>
         public override async Task BaseRemoveByPatternAsync(string pattern, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(pattern, nameof(pattern));
+
+            pattern = this.HandleKeyPattern(pattern);
+
+            if (_options.EnableLogging)
+                _logger?.LogInformation($"RemoveByPatternAsync : pattern = {pattern}");
+
+            var redisKeys = this.SearchRedisKeys(pattern);
+
+            var tasks = new List<Task<long>>();
+
+            foreach (var item in redisKeys)
+            {
+                tasks.Add(_cache.DelAsync(item));
+            }
+
+            await Task.WhenAll(tasks);
         }
 
         /// <summary>

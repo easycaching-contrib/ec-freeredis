@@ -357,8 +357,11 @@
             if (pattern.Equals("*"))
                 throw new ArgumentException("the pattern should not equal to *");
 
-            if (!string.IsNullOrWhiteSpace(_options.DBConfig.KeyPrefix))
-                pattern = _options.DBConfig.KeyPrefix + pattern;
+            var tmpPrefix = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
+              ?? _options.DBConfig.SentinelConnectionString?.Prefix;
+
+            if (!string.IsNullOrWhiteSpace(tmpPrefix))
+                pattern = tmpPrefix + pattern;
 
             return pattern;
         }
@@ -376,11 +379,11 @@
             if (!prefix.EndsWith("*", StringComparison.OrdinalIgnoreCase))
                 prefix = string.Concat(prefix, "*");
 
-            var tmp = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
+            var tmpPrefix = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
                 ?? _options.DBConfig.SentinelConnectionString?.Prefix;
 
-            if (!string.IsNullOrWhiteSpace(tmp))
-                prefix = tmp;
+            if (!string.IsNullOrWhiteSpace(tmpPrefix))
+                prefix = tmpPrefix + prefix;
 
             return prefix;
         }
@@ -390,6 +393,11 @@
           throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Searchs the redis keys.
+        /// </summary>
+        /// <returns>The redis keys.</returns>
+        /// <param name="pattern">Pattern.</param>
         private string[] SearchRedisKeys(string pattern)
         {
             var keys = new List<string>();

@@ -2,6 +2,7 @@
 {
     using EasyCaching.Core;
     using EasyCaching.Core.Configurations;
+    using EasyCaching.Core.DistributedLock;
     using Microsoft.Extensions.Configuration;
     using System;
 
@@ -43,6 +44,17 @@
             }
 
             options.RegisterExtension(new RedisOptionsExtension(name, configure));
+            return options;
+        }
+
+        /// <summary>
+        /// Uses the FreeRedis lock.
+        /// </summary>
+        /// <param name="options">Options.</param>
+        public static EasyCachingOptions UseRedisLock(this EasyCachingOptions options)
+        {
+            options.UseDistributedLock<FreeRedisLockFactory>();
+
             return options;
         }
     }
