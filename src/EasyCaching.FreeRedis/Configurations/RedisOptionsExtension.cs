@@ -46,17 +46,20 @@
 
                 if (sentinelsConn != null)
                 {
+                    // Redis Sentinel
                     return new EasyCachingFreeRedisClient(_name, sentinelsConn, sentinels.ToArray(), rwSplitting);
                 }
 
                 if (conns.Count == 1)
                 {
+                    // Master-Slave
                     var slave = slaveConns != null && slaveConns.Any() ? slaveConns.ToArray() : null;
                     return new EasyCachingFreeRedisClient(_name, conns[0], slave);
                 }
                 else
                 {
-                    if(redirectRule!=null) return new EasyCachingFreeRedisClient(_name, conns.ToArray(), redirectRule);
+                    // Redis Cluster
+                    if (redirectRule!=null) return new EasyCachingFreeRedisClient(_name, conns.ToArray(), redirectRule);
                     else return new EasyCachingFreeRedisClient(_name, conns.ToArray());
                 }
             });
