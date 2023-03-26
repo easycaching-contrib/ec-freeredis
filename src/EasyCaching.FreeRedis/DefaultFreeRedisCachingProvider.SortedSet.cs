@@ -1,121 +1,263 @@
 ﻿namespace EasyCaching.FreeRedis
 {
     using EasyCaching.Core;
+    using global::FreeRedis;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     public partial class DefaultFreeRedisCachingProvider : IRedisCachingProvider
     {
-        public long ZAdd<T>(string cacheKey, Dictionary<T, double> cacheValues)
+         public long ZAdd<T>(string cacheKey, Dictionary<T, double> cacheValues)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<long> ZAddAsync<T>(string cacheKey, Dictionary<T, double> cacheValues)
-        {
-            throw new NotImplementedException();
+            var param = new List<ZMember>();
+
+            foreach (var item in cacheValues)
+            {
+                param.Add(new ZMember(_serializer.Serialize(item.Key), (decimal)item.Value));
+            }
+
+            var len = _cache.ZAdd(cacheKey, param.ToArray());
+
+            return len;
         }
 
         public long ZCard(string cacheKey)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<long> ZCardAsync(string cacheKey)
-        {
-            throw new NotImplementedException();
+            var len = _cache.ZCard(cacheKey);
+            return len;
         }
 
         public long ZCount(string cacheKey, double min, double max)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<long> ZCountAsync(string cacheKey, double min, double max)
-        {
-            throw new NotImplementedException();
+            var len = _cache.ZCount(cacheKey, (decimal)min, (decimal)max);
+            return len;
         }
-
         public double ZIncrBy(string cacheKey, string field, double val = 1)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNullOrWhiteSpace(field, nameof(field));
 
-        public Task<double> ZIncrByAsync(string cacheKey, string field, double val = 1)
-        {
-            throw new NotImplementedException();
+            var value = _cache.ZIncrBy(cacheKey, field, (decimal)val);
+            return (double)value;
         }
-
         public long ZLexCount(string cacheKey, string min, string max)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<long> ZLexCountAsync(string cacheKey, string min, string max)
-        {
-            throw new NotImplementedException();
+            var len = _cache.ZLexCount(cacheKey, min, max);
+            return len;
         }
 
         public List<T> ZRange<T>(string cacheKey, long start, long stop)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<List<T>> ZRangeAsync<T>(string cacheKey, long start, long stop)
-        {
-            throw new NotImplementedException();
+            var list = new List<T>();
+
+            var bytes = _cache.ZRange<byte[]>(cacheKey, start, stop);
+
+            foreach (var item in bytes)
+            {
+                list.Add(_serializer.Deserialize<T>(item));
+            }
+
+            return list;
         }
 
         public List<T> ZRangeByScore<T>(string cacheKey, double min, double max, long? count = null, long offset = 0)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<List<T>> ZRangeByScoreAsync<T>(string cacheKey, double min, double max, long? count = null, long offset = 0)
-        {
-            throw new NotImplementedException();
+            var list = new List<T>();
+
+            var bytes = _cache.ZRangeByScore<byte[]>(cacheKey, (decimal)min, (decimal)max, (int)offset, (int)count);
+
+            foreach (var item in bytes)
+            {
+                list.Add(_serializer.Deserialize<T>(item));
+            }
+
+            return list;
         }
 
         public long ZRangeRemByScore(string cacheKey, double min, double max)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            
+            return _cache.ZRemRangeByScore(cacheKey, (decimal)min, (decimal)max);
         }
-
-        public async Task<long> ZRangeRemByScoreAsync(string cacheKey, double min, double max)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public long? ZRank<T>(string cacheKey, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+
+            var index = _cache.ZRank(cacheKey, bytes);
+
+            return index;
         }
 
-        public Task<long?> ZRankAsync<T>(string cacheKey, T cacheValue)
-        {
-            throw new NotImplementedException();
-        }
 
         public long ZRem<T>(string cacheKey, IList<T> cacheValues)
         {
-            throw new NotImplementedException();
-        }
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-        public Task<long> ZRemAsync<T>(string cacheKey, IList<T> cacheValues)
-        {
-            throw new NotImplementedException();
+            var bytes = new List<byte[]>();
+
+            foreach (var item in cacheValues)
+            {
+                bytes.Add(_serializer.Serialize(item));
+            }
+
+            var len = _cache.ZRem<byte[]>(cacheKey, bytes.ToArray());
+
+            return len;
         }
 
         public double? ZScore<T>(string cacheKey, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+
+            var score = _cache.ZScore(cacheKey, bytes);
+
+            return (double?)score;
         }
 
-        public Task<double?> ZScoreAsync<T>(string cacheKey, T cacheValue)
+        public async Task<long> ZAddAsync<T>(string cacheKey, Dictionary<T, double> cacheValues)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var param = new List<(decimal, object)>();
+
+            foreach (var item in cacheValues)
+            {
+                param.Add(((decimal, object))(item.Value, _serializer.Serialize(item.Key)));
+            }
+
+            var len = await _cache.ZAddAsync(cacheKey, param.ToArray());
+
+            return len;
+        }
+
+
+        public async Task<long> ZCardAsync(string cacheKey)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var len = await _cache.ZCardAsync(cacheKey);
+            return len;
+        }
+
+        public async Task<long> ZCountAsync(string cacheKey, double min, double max)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var len = await _cache.ZCountAsync(cacheKey, (decimal)min, (decimal)max);
+            return len;
+        }
+
+        public async Task<double> ZIncrByAsync(string cacheKey, string field, double val = 1)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNullOrWhiteSpace(field, nameof(field));
+
+            var value = await _cache.ZIncrByAsync(cacheKey, field, (decimal)val);
+            return (double)value;
+        }
+
+        public async Task<long> ZLexCountAsync(string cacheKey, string min, string max)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var len = await _cache.ZLexCountAsync(cacheKey, min, max);
+            return len;
+        }
+
+        public async Task<List<T>> ZRangeAsync<T>(string cacheKey, long start, long stop)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var list = new List<T>();
+
+            var bytes = await _cache.ZRangeAsync<byte[]>(cacheKey, start, stop);
+
+            foreach (var item in bytes)
+            {
+                list.Add(_serializer.Deserialize<T>(item));
+            }
+
+            return list;
+        }
+
+        public async Task<List<T>> ZRangeByScoreAsync<T>(string cacheKey, double min, double max, long? count = null, long offset = 0)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var list = new List<T>();
+
+            var bytes = await _cache.ZRangeByScoreAsync<byte[]>(cacheKey, (decimal)min, (decimal)max, count, offset);
+
+            foreach (var item in bytes)
+            {
+                list.Add(_serializer.Deserialize<T>(item));
+            }
+
+            return list;
+        }
+
+        public async Task<long> ZRangeRemByScoreAsync(string cacheKey, double min, double max)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            return await _cache.ZRemRangeByScoreAsync(cacheKey, (decimal)min, (decimal)max);
+        }
+
+        public async Task<long?> ZRankAsync<T>(string cacheKey, T cacheValue)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+
+            var index = await _cache.ZRankAsync(cacheKey, bytes);
+
+            return index;
+        }
+
+        public async Task<long> ZRemAsync<T>(string cacheKey, IList<T> cacheValues)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = new List<byte[]>();
+
+            foreach (var item in cacheValues)
+            {
+                bytes.Add(_serializer.Serialize(item));
+            }
+
+            var len = await _cache.ZRemAsync<byte[]>(cacheKey, bytes.ToArray());
+
+            return len;
+        }
+
+        public async Task<double?> ZScoreAsync<T>(string cacheKey, T cacheValue)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+
+            var score = await _cache.ZScoreAsync(cacheKey, bytes);
+
+            return (double?)score;
         }
     }
 }
