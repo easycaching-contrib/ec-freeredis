@@ -1,7 +1,7 @@
 ﻿namespace EasyCaching.FreeRedis
 {
     using EasyCaching.Core;
-    using System;
+    using global::FreeRedis;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -9,142 +9,283 @@
     {
         public T LIndex<T>(string cacheKey, long index)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _cache.LIndex<byte[]>(cacheKey, index);
+            return _serializer.Deserialize<T>(bytes);
         }
 
         public long LLen(string cacheKey)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            return _cache.LLen(cacheKey);
         }
 
         public T LPop<T>(string cacheKey)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _cache.LPop<byte[]>(cacheKey);
+            return _serializer.Deserialize<T>(bytes);
         }
 
         public long LPush<T>(string cacheKey, IList<T> cacheValues)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNullAndCountGTZero(cacheValues, nameof(cacheValues));
+
+            var list = new List<byte[]>();
+
+            foreach (var item in cacheValues)
+            {
+                list.Add(_serializer.Serialize(item));
+            }
+
+            var len = _cache.LPush(cacheKey, list.ToArray());
+            return len;
         }
 
         public List<T> LRange<T>(string cacheKey, long start, long stop)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var list = new List<T>();
+
+            var bytes = _cache.LRange<byte[]>(cacheKey, start, stop);
+
+            foreach (var item in bytes)
+            {
+                list.Add(_serializer.Deserialize<T>(item));
+            }
+
+            return list;
         }
 
         public long LRem<T>(string cacheKey, long count, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+            return _cache.LRem(cacheKey, count, bytes);
         }
 
         public bool LSet<T>(string cacheKey, long index, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+
+            _cache.LSet(cacheKey, index, bytes);
+
+            return true;
         }
 
         public bool LTrim(string cacheKey, long start, long stop)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            _cache.LTrim(cacheKey, start, stop);
+
+            return true;
         }
 
         public long LPushX<T>(string cacheKey, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+            return _cache.LPushX(cacheKey, bytes);
         }
 
         public long LInsertBefore<T>(string cacheKey, T pivot, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var pivotBytes = _serializer.Serialize(pivot);
+            var cacheValueBytes = _serializer.Serialize(cacheValue);
+            return _cache.LInsert(cacheKey, InsertDirection.before, pivotBytes, cacheValueBytes);
         }
 
         public long LInsertAfter<T>(string cacheKey, T pivot, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var pivotBytes = _serializer.Serialize(pivot);
+            var cacheValueBytes = _serializer.Serialize(cacheValue);
+            return _cache.LInsert(cacheKey, InsertDirection.after, pivotBytes, cacheValueBytes);
         }
 
         public long RPushX<T>(string cacheKey, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+            return _cache.RPushX(cacheKey, bytes);
         }
 
         public long RPush<T>(string cacheKey, IList<T> cacheValues)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNullAndCountGTZero(cacheValues, nameof(cacheValues));
+
+            var list = new List<byte[]>();
+
+            foreach (var item in cacheValues)
+            {
+                list.Add(_serializer.Serialize(item));
+            }
+
+            var len = _cache.RPush(cacheKey, list.ToArray());
+            return len;
         }
 
         public T RPop<T>(string cacheKey)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _cache.RPop<byte[]>(cacheKey);
+            return _serializer.Deserialize<T>(bytes);
         }
 
         public async Task<T> LIndexAsync<T>(string cacheKey, long index)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = await _cache.LIndexAsync<byte[]>(cacheKey, index);
+            return _serializer.Deserialize<T>(bytes);
         }
 
         public async Task<long> LLenAsync(string cacheKey)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            return await _cache.LLenAsync(cacheKey);
         }
 
         public async Task<T> LPopAsync<T>(string cacheKey)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = await _cache.LPopAsync<byte[]>(cacheKey);
+            return _serializer.Deserialize<T>(bytes);
         }
 
         public async Task<long> LPushAsync<T>(string cacheKey, IList<T> cacheValues)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNullAndCountGTZero(cacheValues, nameof(cacheValues));
+
+            var list = new List<byte[]>();
+
+            foreach (var item in cacheValues)
+            {
+                list.Add(_serializer.Serialize(item));
+            }
+
+            var len = await _cache.LPushAsync(cacheKey, list.ToArray());
+            return len;
         }
 
         public async Task<List<T>> LRangeAsync<T>(string cacheKey, long start, long stop)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var list = new List<T>();
+
+            var bytes = await _cache.LRangeAsync<byte[]>(cacheKey, start, stop);
+
+            foreach (var item in bytes)
+            {
+                list.Add(_serializer.Deserialize<T>(item));
+            }
+
+            return list;
         }
 
         public async Task<long> LRemAsync<T>(string cacheKey, long count, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+            return await _cache.LRemAsync(cacheKey, count, bytes);
         }
 
         public async Task<bool> LSetAsync<T>(string cacheKey, long index, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+
+            await _cache.LSetAsync(cacheKey, index, bytes);
+
+            return true;
         }
 
         public async Task<bool> LTrimAsync(string cacheKey, long start, long stop)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            await _cache.LTrimAsync(cacheKey, start, stop);
+            return true;
         }
 
-        public Task<long> LPushXAsync<T>(string cacheKey, T cacheValue)
+        public async Task<long> LPushXAsync<T>(string cacheKey, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+            return await _cache.LPushXAsync(cacheKey, bytes);
         }
 
         public async Task<long> LInsertBeforeAsync<T>(string cacheKey, T pivot, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var pivotBytes = _serializer.Serialize(pivot);
+            var cacheValueBytes = _serializer.Serialize(cacheValue);
+            return await _cache.LInsertAsync(cacheKey, InsertDirection.before, pivotBytes, cacheValueBytes);
         }
 
         public async Task<long> LInsertAfterAsync<T>(string cacheKey, T pivot, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var pivotBytes = _serializer.Serialize(pivot);
+            var cacheValueBytes = _serializer.Serialize(cacheValue);
+            return await _cache.LInsertAsync(cacheKey, InsertDirection.before, pivotBytes, cacheValueBytes);
         }
 
-        public Task<long> RPushXAsync<T>(string cacheKey, T cacheValue)
+        public async Task<long> RPushXAsync<T>(string cacheKey, T cacheValue)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = _serializer.Serialize(cacheValue);
+            return await _cache.RPushXAsync(cacheKey, bytes);
         }
 
         public async Task<long> RPushAsync<T>(string cacheKey, IList<T> cacheValues)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+            ArgumentCheck.NotNullAndCountGTZero(cacheValues, nameof(cacheValues));
+
+            var list = new List<byte[]>();
+
+            foreach (var item in cacheValues)
+            {
+                list.Add(_serializer.Serialize(item));
+            }
+
+            var len = await _cache.RPushAsync(cacheKey, list.ToArray());
+            return len;
         }
 
         public async Task<T> RPopAsync<T>(string cacheKey)
         {
-            throw new NotImplementedException();
+            ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
+
+            var bytes = await _cache.RPopAsync<byte[]>(cacheKey);
+            return _serializer.Deserialize<T>(bytes);
         }
     }
 }
