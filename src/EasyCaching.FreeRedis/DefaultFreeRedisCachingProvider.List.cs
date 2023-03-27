@@ -253,7 +253,7 @@
 
             var pivotBytes = _serializer.Serialize(pivot);
             var cacheValueBytes = _serializer.Serialize(cacheValue);
-            return await _cache.LInsertAsync(cacheKey, InsertDirection.before, pivotBytes, cacheValueBytes);
+            return await _cache.LInsertAsync(cacheKey, InsertDirection.after, pivotBytes, cacheValueBytes);
         }
 
         public async Task<long> RPushXAsync<T>(string cacheKey, T cacheValue)

@@ -258,6 +258,12 @@
             return (double?)score;
         }
 
+        /// <summary>
+        /// Convert to T for FreeRedis RespHelper Method
+        /// </summary>
+        /// <typeparam name="T">type</typeparam>
+        /// <param name="value">object value</param>
+        /// <returns></returns>
         T ConvertTo<T>(object value) => (T)typeof(T).FromObject(value);
     }
 

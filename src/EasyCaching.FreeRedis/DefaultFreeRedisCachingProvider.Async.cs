@@ -374,7 +374,7 @@
             if (_options.EnableLogging)
                 _logger?.LogInformation("Redis -- FlushAsync");
 
-            // TODO：not has FlushDb async
+            // TODO：all nodes
             throw new NotImplementedException();
             // _cache.FlushDb();
         }

@@ -45,16 +45,17 @@
             bool isNx = when.Equals("nx", System.StringComparison.OrdinalIgnoreCase);
             bool isXx = when.Equals("xx", System.StringComparison.OrdinalIgnoreCase);
 
+            var flag = false;
             if (expiration.HasValue)
             {
-                _cache.Set(cacheKey, cacheValue, expiration.Value, false, isNx, isXx, false);
+                flag = _cache.Set(cacheKey, cacheValue, expiration.Value, false, isNx, isXx, false) == "OK";
             }
             else
             {
-                _cache.Set(cacheKey, cacheValue);
+                flag = _cache.Set(cacheKey, cacheValue, TimeSpan.FromSeconds(0), false, isNx, isXx, false) == "OK";
             }
 
-            return true;
+            return flag;
         }
 
         public async Task<bool> StringSetAsync(string cacheKey, string cacheValue, System.TimeSpan? expiration, string when)
@@ -64,16 +65,17 @@
             bool isNx = when.Equals("nx", System.StringComparison.OrdinalIgnoreCase);
             bool isXx = when.Equals("xx", System.StringComparison.OrdinalIgnoreCase);
 
+            var flag = false;
             if (expiration.HasValue)
             {
-                await _cache.SetAsync(cacheKey, cacheValue, expiration.Value, false, isNx, isXx, false);
+                flag = await _cache.SetAsync(cacheKey, cacheValue, expiration.Value, false, isNx, isXx, false) == "OK";
             }
             else
             {
-                await _cache.SetAsync(cacheKey, cacheValue);
+                flag = await _cache.SetAsync(cacheKey, cacheValue, TimeSpan.FromSeconds(0), false, isNx, isXx, false) == "OK";
             }
 
-            return true;
+            return flag;
         }
 
         public string StringGet(string cacheKey)

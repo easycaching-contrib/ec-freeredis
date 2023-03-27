@@ -13,14 +13,14 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            return _cache.Del(cacheKey) == 0;
+            return _cache.Del(cacheKey) > 0;
         }
 
         public async Task<bool> KeyDelAsync(string cacheKey)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            return await _cache.DelAsync(cacheKey) == 0;
+            return await _cache.DelAsync(cacheKey) > 0;
         }
 
         public bool KeyExpire(string cacheKey, int second)

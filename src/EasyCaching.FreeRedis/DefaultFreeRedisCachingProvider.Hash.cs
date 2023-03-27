@@ -27,7 +27,7 @@
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
             ArgumentCheck.NotNullOrWhiteSpace(field, nameof(field));
 
-            return _cache.HSet(cacheKey, field, cacheValue) == 0;
+            return _cache.HSet(cacheKey, field, cacheValue) > 0;
         }
 
         public bool HExists(string cacheKey, string field)
@@ -139,7 +139,7 @@
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
             ArgumentCheck.NotNullOrWhiteSpace(field, nameof(field));
 
-            return await _cache.HSetAsync(cacheKey, field, cacheValue) == 0;
+            return await _cache.HSetAsync(cacheKey, field, cacheValue) > 0;
         }
 
         public async Task<bool> HExistsAsync(string cacheKey, string field)

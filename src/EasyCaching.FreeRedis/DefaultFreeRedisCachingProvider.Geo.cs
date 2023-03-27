@@ -90,7 +90,7 @@
             var ms = new List<(decimal longitude, decimal latitude)?>();
             foreach (var m in res)
             {
-                ms.Add((m.longitude, m.latitude));
+                ms.Add(m == null ? null : (m.longitude, m.latitude));
             }
 
             return ms;
@@ -106,7 +106,7 @@
             var ms = new List<(decimal longitude, decimal latitude)?>();
             foreach (var m in res)
             {
-                ms.Add((m.longitude, m.latitude));
+                ms.Add(m == null ? null : (m.longitude, m.latitude));
             }
 
             return ms;
