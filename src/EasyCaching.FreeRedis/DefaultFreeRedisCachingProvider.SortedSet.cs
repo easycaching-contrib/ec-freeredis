@@ -8,7 +8,7 @@
 
     public partial class DefaultFreeRedisCachingProvider : IRedisCachingProvider
     {
-         public long ZAdd<T>(string cacheKey, Dictionary<T, double> cacheValues)
+        public long ZAdd<T>(string cacheKey, Dictionary<T, double> cacheValues)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
@@ -16,7 +16,7 @@
 
             foreach (var item in cacheValues)
             {
-                param.Add(new ZMember(_serializer.Serialize(item.Key), (decimal)item.Value));
+                param.Add(new ZMember(ConvertTo<string>(item.Key), (decimal)item.Value));
             }
 
             var len = _cache.ZAdd(cacheKey, param.ToArray());
@@ -44,7 +44,7 @@
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
             ArgumentCheck.NotNullOrWhiteSpace(field, nameof(field));
 
-            var value = _cache.ZIncrBy(cacheKey, field, (decimal)val);
+            var value = _cache.ZIncrBy(cacheKey, (decimal)val, field);
             return (double)value;
         }
         public long ZLexCount(string cacheKey, string min, string max)
@@ -61,11 +61,11 @@
 
             var list = new List<T>();
 
-            var bytes = _cache.ZRange<byte[]>(cacheKey, start, stop);
+            var member = _cache.ZRange(cacheKey, start, stop);
 
-            foreach (var item in bytes)
+            foreach (var item in member)
             {
-                list.Add(_serializer.Deserialize<T>(item));
+                list.Add(ConvertTo<T>(item));
             }
 
             return list;
@@ -77,11 +77,11 @@
 
             var list = new List<T>();
 
-            var bytes = _cache.ZRangeByScore<byte[]>(cacheKey, (decimal)min, (decimal)max, (int)offset, (int)count);
+            var members = _cache.ZRangeByScore(cacheKey, (decimal)min, (decimal)max, (int)offset, (int)(count ?? 0));
 
-            foreach (var item in bytes)
+            foreach (var item in members)
             {
-                list.Add(_serializer.Deserialize<T>(item));
+                list.Add(ConvertTo<T>(item));
             }
 
             return list;
@@ -90,7 +90,7 @@
         public long ZRangeRemByScore(string cacheKey, double min, double max)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
-            
+
             return _cache.ZRemRangeByScore(cacheKey, (decimal)min, (decimal)max);
         }
 
@@ -98,9 +98,7 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var bytes = _serializer.Serialize(cacheValue);
-
-            var index = _cache.ZRank(cacheKey, bytes);
+            var index = _cache.ZRank(cacheKey, ConvertTo<string>(cacheValue));
 
             return index;
         }
@@ -110,14 +108,14 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var bytes = new List<byte[]>();
+            var members = new List<string>();
 
             foreach (var item in cacheValues)
             {
-                bytes.Add(_serializer.Serialize(item));
+                members.Add(ConvertTo<string>(item));
             }
 
-            var len = _cache.ZRem<byte[]>(cacheKey, bytes.ToArray());
+            var len = _cache.ZRem(cacheKey, members.ToArray());
 
             return len;
         }
@@ -126,9 +124,9 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var bytes = _serializer.Serialize(cacheValue);
+            var member = ConvertTo<string>(cacheValue);
 
-            var score = _cache.ZScore(cacheKey, bytes);
+            var score = _cache.ZScore(cacheKey, member);
 
             return (double?)score;
         }
@@ -137,11 +135,11 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var param = new List<(decimal, object)>();
+            var param = new List<ZMember>();
 
             foreach (var item in cacheValues)
             {
-                param.Add(((decimal, object))(item.Value, _serializer.Serialize(item.Key)));
+                param.Add(new ZMember(ConvertTo<string>(item.Key), (decimal)item.Value));
             }
 
             var len = await _cache.ZAddAsync(cacheKey, param.ToArray());
@@ -171,7 +169,7 @@
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
             ArgumentCheck.NotNullOrWhiteSpace(field, nameof(field));
 
-            var value = await _cache.ZIncrByAsync(cacheKey, field, (decimal)val);
+            var value = await _cache.ZIncrByAsync(cacheKey, (decimal)val, field);
             return (double)value;
         }
 
@@ -189,11 +187,11 @@
 
             var list = new List<T>();
 
-            var bytes = await _cache.ZRangeAsync<byte[]>(cacheKey, start, stop);
+            var members = await _cache.ZRangeAsync(cacheKey, start, stop);
 
-            foreach (var item in bytes)
+            foreach (var item in members)
             {
-                list.Add(_serializer.Deserialize<T>(item));
+                list.Add(ConvertTo<T>(item));
             }
 
             return list;
@@ -205,11 +203,11 @@
 
             var list = new List<T>();
 
-            var bytes = await _cache.ZRangeByScoreAsync<byte[]>(cacheKey, (decimal)min, (decimal)max, count, offset);
+            var members = await _cache.ZRangeByScoreAsync(cacheKey, (decimal)min, (decimal)max, (int)offset, (int)(count ?? 0));
 
-            foreach (var item in bytes)
+            foreach (var item in members)
             {
-                list.Add(_serializer.Deserialize<T>(item));
+                list.Add(ConvertTo<T>(item));
             }
 
             return list;
@@ -226,9 +224,9 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var bytes = _serializer.Serialize(cacheValue);
+            var member = ConvertTo<string>(cacheValue);
 
-            var index = await _cache.ZRankAsync(cacheKey, bytes);
+            var index = await _cache.ZRankAsync(cacheKey, member);
 
             return index;
         }
@@ -237,14 +235,14 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var bytes = new List<byte[]>();
+            var members = new List<string>();
 
             foreach (var item in cacheValues)
             {
-                bytes.Add(_serializer.Serialize(item));
+                members.Add(ConvertTo<string>(item));
             }
 
-            var len = await _cache.ZRemAsync<byte[]>(cacheKey, bytes.ToArray());
+            var len = await _cache.ZRemAsync(cacheKey, members.ToArray());
 
             return len;
         }
@@ -253,11 +251,14 @@
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var bytes = _serializer.Serialize(cacheValue);
+            var member = ConvertTo<string>(cacheValue);
 
-            var score = await _cache.ZScoreAsync(cacheKey, bytes);
+            var score = await _cache.ZScoreAsync(cacheKey, member);
 
             return (double?)score;
         }
+
+        T ConvertTo<T>(object value) => (T)typeof(T).FromObject(value);
     }
+
 }
