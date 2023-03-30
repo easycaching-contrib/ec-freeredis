@@ -114,8 +114,7 @@
             if (_options.EnableLogging)
                 _logger?.LogInformation("Redis -- Flush");
 
-            // TODO: all nodes
-            _cache.FlushDb();
+            _cache.NodesServerManager.FlushDb();
         }
 
         /// <summary>
@@ -287,14 +286,11 @@
             {
                 var allCount = 0L;
 
-
-                // TODO: get all nodes.
-                //var servers = _cache.NodesServerManager.DbSize();
-
-                //foreach (var item in servers)
-                //{
-                //    allCount += item.value;
-                //}
+                var sizes = _cache.NodesServerManager.DbSize();
+                foreach (var size in sizes)
+                {
+                    allCount += size;
+                }
 
                 return (int)allCount;
             }
@@ -515,18 +511,7 @@
         /// <param name="pattern">Pattern.</param>
         private string[] SearchRedisKeys(string pattern)
         {
-            var keys = new List<string>();
-
-            // TODO: get all nodes.
-            long nextCursor = 0;
-            do
-            {
-                var scanResult = _cache.Scan(nextCursor, pattern, 500, string.Empty);
-                nextCursor = scanResult.cursor;
-                var items = scanResult.items;
-                keys.AddRange(items);
-            }
-            while (nextCursor != 0);
+            var keys = _cache.NodesServerManager.Keys(pattern, 200);
 
             var prefix = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
                 ?? _options.DBConfig.SentinelConnectionString?.Prefix;

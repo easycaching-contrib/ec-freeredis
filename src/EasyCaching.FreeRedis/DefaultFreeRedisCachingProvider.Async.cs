@@ -369,14 +369,12 @@
         /// Flush All Cached Item async.
         /// </summary>
         /// <returns>The async.</returns>
-        public override Task BaseFlushAsync(CancellationToken cancellationToken = default)
+        public override async Task BaseFlushAsync(CancellationToken cancellationToken = default)
         {
             if (_options.EnableLogging)
                 _logger?.LogInformation("Redis -- FlushAsync");
 
-            // TODO：all nodes
-            throw new NotImplementedException();
-            // _cache.FlushDb();
+            await _cache.NodesServerManager.FlushDbAsync();
         }
 
         /// <summary>
