@@ -26,7 +26,7 @@
             IServiceProvider serviceProvider = services.BuildServiceProvider();
             _provider = serviceProvider.GetService<IRedisCachingProvider>();
             _baseProvider = serviceProvider.GetService<IEasyCachingProvider>();
-            _nameSpace = "CSRedisFeature";
+            _nameSpace = "FreeRedisFeature";
         }
     }
 }

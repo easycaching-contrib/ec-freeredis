@@ -18,6 +18,21 @@ namespace EasyCaching.FreeRedis.Tests
         protected override IEasyCachingProvider CreateCachingProvider(Action<BaseProviderOptions> additionalSetup)
         {
             IServiceCollection services = new ServiceCollection();
+            // Pooling Test
+            //services.AddEasyCaching(ecops =>
+            //    ecops.UseFreeRedis(frops =>
+            //    {
+            //        frops.DBConfig = new FreeRedisDBOptions
+            //        {
+            //            ConnectionStrings = new List<ConnectionStringBuilder>
+            //            {
+            //                "192.168.3.86:6379,defaultDatabase=13,poolsize=10",
+            //            }
+            //        };
+            //        additionalSetup(frops);
+            //    }, ProviderName).UseRedisLock().WithJson(ProviderName));
+
+            // Cluster Test
             services.AddEasyCaching(ecops =>
                 ecops.UseFreeRedis(frops =>
                 {
@@ -25,7 +40,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "192.168.3.86:6379,defaultDatabase=13,poolsize=10"
+                            "127.0.0.1:7000","127.0.0.1:7001","127.0.0.1:7002",
                         }
                     };
                     additionalSetup(frops);
@@ -53,11 +68,11 @@ namespace EasyCaching.FreeRedis.Tests
         }
     }
 
-    public class CSRedisCachingProviderWithNamedSerTest
+    public class FreeRedisCachingProviderWithNamedSerTest
     {
         private readonly IEasyCachingProviderFactory _providerFactory;
 
-        public CSRedisCachingProviderWithNamedSerTest()
+        public FreeRedisCachingProviderWithNamedSerTest()
         {
             IServiceCollection services = new ServiceCollection();
             services.AddEasyCaching(option =>
@@ -108,11 +123,11 @@ namespace EasyCaching.FreeRedis.Tests
         }
     }
 
-    public class CSRedisCachingProviderWithKeyPrefixTest
+    public class FreeRedisCachingProviderWithKeyPrefixTest
     {
         private readonly IEasyCachingProviderFactory _providerFactory;
 
-        public CSRedisCachingProviderWithKeyPrefixTest()
+        public FreeRedisCachingProviderWithKeyPrefixTest()
         {
             IServiceCollection services = new ServiceCollection();
             services.AddEasyCaching(x =>
