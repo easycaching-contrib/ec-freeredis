@@ -2,7 +2,6 @@
 {
     using EasyCaching.Core;
     using System;
-    using System.Threading;
     using System.Threading.Tasks;
 
     public partial class DefaultFreeRedisCachingProvider : IRedisCachingProvider

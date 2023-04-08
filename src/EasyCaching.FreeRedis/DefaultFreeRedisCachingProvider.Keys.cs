@@ -1,7 +1,6 @@
 ﻿namespace EasyCaching.FreeRedis
 {
     using EasyCaching.Core;
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -93,7 +92,7 @@
             ArgumentCheck.NotNullOrWhiteSpace(script, nameof(script));
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
 
-            var res = _cache.EvalAsync(script, new[] { cacheKey }, args.ToArray());
+            var res = await _cache.EvalAsync(script, new[] { cacheKey }, args.ToArray());
             return res;
         }
 

@@ -18,21 +18,7 @@ namespace EasyCaching.FreeRedis.Tests
         protected override IEasyCachingProvider CreateCachingProvider(Action<BaseProviderOptions> additionalSetup)
         {
             IServiceCollection services = new ServiceCollection();
-            // Pooling Test
-            //services.AddEasyCaching(ecops =>
-            //    ecops.UseFreeRedis(frops =>
-            //    {
-            //        frops.DBConfig = new FreeRedisDBOptions
-            //        {
-            //            ConnectionStrings = new List<ConnectionStringBuilder>
-            //            {
-            //                "192.168.3.86:6379,defaultDatabase=13,poolsize=10",
-            //            }
-            //        };
-            //        additionalSetup(frops);
-            //    }, ProviderName).UseRedisLock().WithJson(ProviderName));
-
-            // Cluster Test
+            // **************** Pooling Test ****************
             services.AddEasyCaching(ecops =>
                 ecops.UseFreeRedis(frops =>
                 {
@@ -40,11 +26,38 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "127.0.0.1:7000","127.0.0.1:7001","127.0.0.1:7002",
+                            "192.168.3.86,defaultDatabase=13,poolsize=10",
                         }
                     };
                     additionalSetup(frops);
                 }, ProviderName).UseRedisLock().WithJson(ProviderName));
+
+            // **************** Cluster Test ****************
+            //services.AddEasyCaching(ecops =>
+            //    ecops.UseFreeRedis(frops =>
+            //    {
+            //        frops.DBConfig = new FreeRedisDBOptions
+            //        {
+            //            ConnectionStrings = new List<ConnectionStringBuilder>
+            //            {
+            //                "127.0.0.1:7000","127.0.0.1:7001","127.0.0.1:7002",
+            //            }
+            //        };
+            //        additionalSetup(frops);
+            //    }, ProviderName).UseRedisLock().WithJson(ProviderName));
+
+            // **************** Sentinel Test ****************
+            //services.AddEasyCaching(ecops =>
+            //    ecops.UseFreeRedis(frops =>
+            //    {
+            //        frops.DBConfig = new FreeRedisDBOptions
+            //        {
+            //            SentinelConnectionString = "127.0.0.1:7010",        
+            //            Sentinels = new List<string> { "127.0.0.1:26379" , "127.0.0.1:26380" },
+            //            RwSplitting = true
+            //        };
+            //        additionalSetup(frops);
+            //    }, ProviderName).UseRedisLock().WithJson(ProviderName));
 
             IServiceProvider serviceProvider = services.BuildServiceProvider();
             return serviceProvider.GetService<IEasyCachingProvider>();
@@ -54,7 +67,6 @@ namespace EasyCaching.FreeRedis.Tests
         public void GetDatabase_Should_Succeed()
         {
             var db = _provider.Database;
-
             Assert.NotNull(db);
             Assert.IsType<EasyCachingFreeRedisClient>(db);
         }

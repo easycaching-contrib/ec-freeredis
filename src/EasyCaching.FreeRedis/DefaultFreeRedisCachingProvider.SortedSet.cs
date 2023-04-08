@@ -2,7 +2,6 @@
 {
     using EasyCaching.Core;
     using global::FreeRedis;
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

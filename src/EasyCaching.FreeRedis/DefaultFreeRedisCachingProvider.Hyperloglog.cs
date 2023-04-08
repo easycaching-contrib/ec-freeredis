@@ -1,7 +1,6 @@
 ﻿namespace EasyCaching.FreeRedis
 {
     using EasyCaching.Core;
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
