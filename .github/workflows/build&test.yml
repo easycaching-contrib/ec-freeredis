@@ -23,7 +23,15 @@ jobs:
       redis6380:
         image: redis
         ports:
-          - 6380:6379        
+          - 6380:6379    
+      redis6381:
+        image: redis
+        ports:
+          - 6381:6379   
+      redis6382:
+        image: redis
+        ports:
+          - 6382:6379       
 
     steps:
     - uses: actions/checkout@v2
