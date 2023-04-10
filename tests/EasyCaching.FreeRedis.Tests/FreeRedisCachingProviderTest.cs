@@ -95,7 +95,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "192.168.3.86:6379,defaultDatabase=13,poolsize=10"
+                            "127.0.0.1:6379,defaultDatabase=13,poolsize=10"
                         }
                     };
 
@@ -108,7 +108,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "127.0.0.1:6388,defaultDatabase=14,poolsize=10"
+                            "127.0.0.1:6380,defaultDatabase=14,poolsize=10"
                         }
                     };
 
@@ -150,7 +150,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "192.168.3.86:6379,defaultDatabase=13,poolsize=10"
+                            "127.0.0.1:6379,defaultDatabase=13,poolsize=10"
                         }
                     };
 
@@ -163,7 +163,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "192.168.3.86:6379,defaultDatabase=13,poolsize=10,prefix=foo:"
+                            "127.0.0.1:6380,defaultDatabase=13,poolsize=10,prefix=foo:"
                         }
                     };
                     config.SerializerName = "json";
