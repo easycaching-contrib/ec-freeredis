@@ -163,7 +163,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "127.0.0.1:6382,defaultDatabase=13,poolsize=10,prefix=foo:"
+                            "127.0.0.1:6381,defaultDatabase=13,poolsize=10,prefix=foo:"
                         }
                     };
                     config.SerializerName = "json";
