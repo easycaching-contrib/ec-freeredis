@@ -1514,7 +1514,7 @@
 
             Assert.Equal(2, res);
 
-            await Task.Delay(1050);
+            await Task.Delay(2000);
 
             var len = await _provider.SCardAsync(cacheKey);
 

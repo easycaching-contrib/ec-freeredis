@@ -26,7 +26,7 @@ namespace EasyCaching.FreeRedis.Tests
                     {
                         ConnectionStrings = new List<ConnectionStringBuilder>
                         {
-                            "192.168.3.86,defaultDatabase=13,poolsize=10",
+                            "127.0.0.1,defaultDatabase=13,poolsize=10",
                         }
                     };
                     additionalSetup(frops);
@@ -52,7 +52,7 @@ namespace EasyCaching.FreeRedis.Tests
             //    {
             //        frops.DBConfig = new FreeRedisDBOptions
             //        {
-            //            SentinelConnectionString = "127.0.0.1:7010",        
+            //            SentinelConnectionString = "mymaster",        
             //            Sentinels = new List<string> { "127.0.0.1:26379" , "127.0.0.1:26380" },
             //            RwSplitting = true
             //        };
