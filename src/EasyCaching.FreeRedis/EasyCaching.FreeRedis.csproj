@@ -1,19 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-		<Description>
-			A simple distributed caching provider based on freeredis.
-		</Description>
-		<PackageTags>Redis,DistributedCache,Caching,Cache</PackageTags>
-		<VersionPrefix>1.9.0</VersionPrefix>
-		<PackageProjectUrl>https://github.com/easycaching-contrib/ec-freeredis</PackageProjectUrl>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<RepositoryUrl>https://github.com/easycaching-contrib/ec-freeredis</RepositoryUrl>
-		<ProjectUrl>https://github.com/easycaching-contrib/ec-freeredis</ProjectUrl>
-		<PackageIcon>nuget-icon.png</PackageIcon>
-		<PackageReleaseNotes>
-			1. Support freeredis
-		</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>

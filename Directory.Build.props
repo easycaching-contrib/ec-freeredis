@@ -4,6 +4,11 @@
   <Import Project="build\version.props" />
 
   <PropertyGroup>    
+    <Description>
+			A simple distributed caching provider based on freeredis.
+		</Description>
+		<PackageTags>Redis,DistributedCache,Caching,Cache</PackageTags>
+
     <VersionPrefix>$(EasyCachingFreeRedisPackageVersion)</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <Owners>ncc;Catcher Wong</Owners>
@@ -11,12 +16,15 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LangVersion>latest</LangVersion>
-    <PackageProjectUrl>https://github.com/dotnetcore/EasyCaching</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/dotnetcore/EasyCaching</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/easycaching-contrib/ec-freeredis</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/easycaching-contrib/ec-freeredis</RepositoryUrl>
     <PackageIcon>nuget-icon.png</PackageIcon>
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);1591</NoWarn>    
+    <PackageReleaseNotes>
+			$(EasyCachingFreeRedisPackageNotes)
+		</PackageReleaseNotes>
   </PropertyGroup>
 
 </Project>

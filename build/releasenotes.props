@@ -1,5 +1,7 @@
 <Project>
 	<PropertyGroup>
-		<EasyCachingFreeRedisPackageNotes></EasyCachingFreeRedisPackageNotes>
+		<EasyCachingFreeRedisPackageNotes>
+		1. Accomplish cache by freeredis
+		</EasyCachingFreeRedisPackageNotes>
 	</PropertyGroup>
 </Project>
