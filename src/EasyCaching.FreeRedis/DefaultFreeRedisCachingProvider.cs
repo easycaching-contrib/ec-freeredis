@@ -9,20 +9,49 @@
 
     public partial class DefaultFreeRedisCachingProvider : EasyCachingAbstractProvider
     {
+        /// <summary>
+        /// The cache.
+        /// </summary>
         private readonly EasyCachingFreeRedisClient _cache;
 
+        /// <summary>
+        /// The serializer.
+        /// </summary>
         private readonly IEasyCachingSerializer _serializer;
 
+        /// <summary>
+        /// The logger.
+        /// </summary>
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// The options.
+        /// </summary>
         private readonly RedisOptions _options;
 
+        /// <summary>
+        /// The cache stats.
+        /// </summary>
         private readonly CacheStats _cacheStats;
 
+        /// <summary>
+        /// The name.
+        /// </summary>
         private readonly string _name;
 
+        /// <summary>
+        /// The provider information.
+        /// </summary>
         private readonly ProviderInfo _info;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:EasyCaching.FreeRedis.DefaultFreeRedisCachingProvider"/> class.
+        /// </summary>
+        /// <param name="name">Name.</param>
+        /// <param name="clients">Clients.</param>
+        /// <param name="serializers">Serializers.</param>
+        /// <param name="options">Options.</param>
+        /// <param name="loggerFactory">Logger factory.</param>
         public DefaultFreeRedisCachingProvider(
            string name,
            IEnumerable<EasyCachingFreeRedisClient> clients,
@@ -65,6 +94,11 @@
             };
         }
 
+        /// <summary>
+        /// Exists the specified cacheKey.
+        /// </summary>
+        /// <returns>The exists.</returns>
+        /// <param name="cacheKey">Cache key.</param>
         public override bool BaseExists(string cacheKey)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -72,15 +106,25 @@
             return _cache.Exists(cacheKey);
         }
 
+        /// <summary>
+        /// Flush this instance.
+        /// </summary>
         public override void BaseFlush()
         {
             if (_options.EnableLogging)
                 _logger?.LogInformation("Redis -- Flush");
 
-            // TODO: all nodes
-            _cache.FlushDb();
+            _cache.NodesServerManager.FlushDb();
         }
 
+        /// <summary>
+        /// Get the specified cacheKey, dataRetriever and expiration.
+        /// </summary>
+        /// <returns>The get.</returns>
+        /// <param name="cacheKey">Cache key.</param>
+        /// <param name="dataRetriever">Data retriever.</param>
+        /// <param name="expiration">Expiration.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override CacheValue<T> BaseGet<T>(string cacheKey, Func<T> dataRetriever, TimeSpan expiration)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -125,6 +169,12 @@
             }
         }
 
+        /// <summary>
+        /// Get the specified cacheKey.
+        /// </summary>
+        /// <returns>The get.</returns>
+        /// <param name="cacheKey">Cache key.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override CacheValue<T> BaseGet<T>(string cacheKey)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -151,6 +201,12 @@
             }
         }
 
+        /// <summary>
+        /// Gets all.
+        /// </summary>
+        /// <returns>The all.</returns>
+        /// <param name="cacheKeys">Cache keys.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override IDictionary<string, CacheValue<T>> BaseGetAll<T>(IEnumerable<string> cacheKeys)
         {
             ArgumentCheck.NotNullAndCountGTZero(cacheKeys, nameof(cacheKeys));
@@ -172,6 +228,30 @@
             return result;
         }
 
+        /// <summary>
+        /// Gets all keys by prefix.
+        /// </summary>
+        /// <param name="prefix">Prefix</param>
+        /// <returns>The all keys by prefix.</returns>
+        public override IEnumerable<string> BaseGetAllKeysByPrefix(string prefix)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(prefix, nameof(prefix));
+
+            prefix = this.HandlePrefix(prefix);
+
+            var redisKeys = this.SearchRedisKeys(prefix);
+
+            var result = redisKeys?.Select(key => (string)key)?.Distinct();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the by prefix.
+        /// </summary>
+        /// <returns>The by prefix.</returns>
+        /// <param name="prefix">Prefix.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override IDictionary<string, CacheValue<T>> BaseGetByPrefix<T>(string prefix)
         {
             ArgumentCheck.NotNullOrWhiteSpace(prefix, nameof(prefix));
@@ -194,20 +274,23 @@
             return result;
         }
 
+
+        /// <summary>
+        /// Gets the count.
+        /// </summary>
+        /// <returns>The count.</returns>
+        /// <param name="prefix">Prefix.</param>
         public override int BaseGetCount(string prefix = "")
         {
             if (string.IsNullOrWhiteSpace(prefix))
             {
                 var allCount = 0L;
 
-
-                // TODO: get all nodes.
-                //var servers = _cache.NodesServerManager.DbSize();
-
-                //foreach (var item in servers)
-                //{
-                //    allCount += item.value;
-                //}
+                var sizes = _cache.NodesServerManager.DbSize();
+                foreach (var size in sizes)
+                {
+                    allCount += size;
+                }
 
                 return (int)allCount;
             }
@@ -215,8 +298,17 @@
             return this.SearchRedisKeys(this.HandlePrefix(prefix)).Length;
         }
 
-        public override object BaseGetDatabse() => _cache;
+        /// <summary>
+        /// Get the cache db.
+        /// </summary>
+        /// <returns></returns>
+        public override object BaseGetDatabase() => _cache;
 
+        /// <summary>
+        /// Get the expiration of cache key.
+        /// </summary>
+        /// <param name="cacheKey">cache key</param>
+        /// <returns>expiration</returns>
         public override TimeSpan BaseGetExpiration(string cacheKey)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -225,8 +317,16 @@
             return TimeSpan.FromSeconds(second);
         }
 
+        /// <summary>
+        /// Get the information of this provider.
+        /// </summary>
+        /// <returns></returns>
         public override ProviderInfo BaseGetProviderInfo() => _info;
 
+        /// <summary>
+        /// Remove the specified cacheKey.
+        /// </summary>
+        /// <param name="cacheKey">Cache key.</param>
         public override void BaseRemove(string cacheKey)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -234,6 +334,10 @@
             _cache.Del(cacheKey);
         }
 
+        /// <summary>
+        /// Removes all.
+        /// </summary>
+        /// <param name="cacheKeys">Cache keys.</param>
         public override void BaseRemoveAll(IEnumerable<string> cacheKeys)
         {
             ArgumentCheck.NotNullAndCountGTZero(cacheKeys, nameof(cacheKeys));
@@ -241,6 +345,10 @@
             _cache.Del(cacheKeys.ToArray());
         }
 
+        /// <summary>
+        /// Remove cached value by prefix
+        /// </summary>
+        /// <param name="prefix">The prefix of cache key</param>
         public override void BaseRemoveByPrefix(string prefix)
         {
             ArgumentCheck.NotNullOrWhiteSpace(prefix, nameof(prefix));
@@ -258,6 +366,13 @@
             }
         }
 
+        /// <summary>
+        /// Set the specified cacheKey, cacheValue and expiration.
+        /// </summary>
+        /// <param name="cacheKey">Cache key.</param>
+        /// <param name="cacheValue">Cache value.</param>
+        /// <param name="expiration">Expiration.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override void BaseSet<T>(string cacheKey, T cacheValue, TimeSpan expiration)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -276,6 +391,12 @@
                 (int)expiration.TotalSeconds);
         }
 
+        /// <summary>
+        /// Sets all.
+        /// </summary>
+        /// <param name="values">Value.</param>
+        /// <param name="expiration">Expiration.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override void BaseSetAll<T>(IDictionary<string, T> values, TimeSpan expiration)
         {
             if (MaxRdSecond > 0)
@@ -290,6 +411,14 @@
             }
         }
 
+        /// <summary>
+        /// Tries the set.
+        /// </summary>
+        /// <returns><c>true</c>, if set was tryed, <c>false</c> otherwise.</returns>
+        /// <param name="cacheKey">Cache key.</param>
+        /// <param name="cacheValue">Cache value.</param>
+        /// <param name="expiration">Expiration.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         public override bool BaseTrySet<T>(string cacheKey, T cacheValue, TimeSpan expiration)
         {
             ArgumentCheck.NotNullOrWhiteSpace(cacheKey, nameof(cacheKey));
@@ -308,6 +437,51 @@
                 (int)expiration.TotalSeconds);
         }
 
+        /// <summary>
+        /// Removes cached item by pattern async.
+        /// </summary>
+        /// <param name="pattern">Pattern of CacheKey.</param>
+        public override void BaseRemoveByPattern(string pattern)
+        {
+            ArgumentCheck.NotNullOrWhiteSpace(pattern, nameof(pattern));
+
+            pattern = this.HandleKeyPattern(pattern);
+
+            if (_options.EnableLogging)
+                _logger?.LogInformation($"RemoveByPattern : pattern = {pattern}");
+
+            var redisKeys = this.SearchRedisKeys(pattern);
+
+            foreach (var item in redisKeys)
+            {
+                _cache.Del(item);
+            }
+        }
+
+        /// <summary>
+        /// Handles the pattern of CacheKey.
+        /// </summary>
+        /// <param name="pattern">Pattern of CacheKey.</param>
+        private string HandleKeyPattern(string pattern)
+        {
+            // Forbid
+            if (pattern.Equals("*"))
+                throw new ArgumentException("the pattern should not equal to *");
+
+            var prefix = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
+              ?? _options.DBConfig.SentinelConnectionString?.Prefix;
+
+            if (!string.IsNullOrWhiteSpace(prefix))
+                pattern = prefix + pattern;
+
+            return pattern;
+        }
+
+        /// <summary>
+        /// Handles the prefix of cache Key.
+        /// </summary>
+        /// <param name="prefix">Prefix of CacheKey.</param>
+        /// <exception cref="ArgumentException"></exception>
         private string HandlePrefix(string prefix)
         {
             // Forbid
@@ -321,28 +495,23 @@
             if (!prefix.EndsWith("*", StringComparison.OrdinalIgnoreCase))
                 prefix = string.Concat(prefix, "*");
 
-            var tmp = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
+            var tmpPrefix = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
                 ?? _options.DBConfig.SentinelConnectionString?.Prefix;
 
-            if (!string.IsNullOrWhiteSpace(tmp))
-                prefix = tmp;
+            if (!string.IsNullOrWhiteSpace(tmpPrefix))
+                prefix = tmpPrefix + prefix;
 
             return prefix;
         }
 
+        /// <summary>
+        /// Searchs the redis keys.
+        /// </summary>
+        /// <returns>The redis keys.</returns>
+        /// <param name="pattern">Pattern.</param>
         private string[] SearchRedisKeys(string pattern)
         {
-            var keys = new List<string>();
-
-            long nextCursor = 0;
-            do
-            {
-                var scanResult = _cache.Scan(nextCursor, pattern, 500, string.Empty);
-                nextCursor = scanResult.cursor;
-                var items = scanResult.items;
-                keys.AddRange(items);
-            }
-            while (nextCursor != 0);
+            var keys = _cache.NodesServerManager.Keys(pattern, 200);
 
             var prefix = _options.DBConfig.ConnectionStrings?.FirstOrDefault()?.Prefix
                 ?? _options.DBConfig.SentinelConnectionString?.Prefix;

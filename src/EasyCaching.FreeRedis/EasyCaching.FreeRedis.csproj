@@ -1,19 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-		<Description>
-			A simple distributed caching provider based on freeredis.
-		</Description>
-		<PackageTags>Redis,DistributedCache,Caching,Cache</PackageTags>
-
-		<PackageReleaseNotes>
-			$(EasyCachingFreeRedisPackageNotes)
-		</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FreeRedis" Version="$(FreeRedisPackageVersion)" />
-		<PackageReference Include="EasyCaching.Core" Version="$(EasyCachingCorePackageVersion)" />
+		<PackageReference Include="FreeRedis" Version="1.0.8" />
+		<PackageReference Include="EasyCaching.Core" Version="1.9.0" />
 	</ItemGroup>
 	
 	<ItemGroup>
