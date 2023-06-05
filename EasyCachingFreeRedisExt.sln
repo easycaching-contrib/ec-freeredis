@@ -11,9 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{2A6F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.FreeRedis", "src\EasyCaching.FreeRedis\EasyCaching.FreeRedis.csproj", "{32C59B57-FADA-460B-A02C-926C0815A107}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCaching.Demo.FreeRedis", "samples\EasyCaching.Demo.FreeRedis\EasyCaching.Demo.FreeRedis.csproj", "{96DD4331-8B12-405F-8CB4-23D3776916AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.Demo.FreeRedis", "samples\EasyCaching.Demo.FreeRedis\EasyCaching.Demo.FreeRedis.csproj", "{96DD4331-8B12-405F-8CB4-23D3776916AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCaching.FreeRedis.Tests", "tests\EasyCaching.FreeRedis.Tests\EasyCaching.FreeRedis.Tests.csproj", "{925BA316-CE38-4051-B2E9-CAFC7F524D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.FreeRedis.Tests", "tests\EasyCaching.FreeRedis.Tests\EasyCaching.FreeRedis.Tests.csproj", "{925BA316-CE38-4051-B2E9-CAFC7F524D56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.Bus.FreeRedis", "src\EasyCaching.Bus.FreeRedis\EasyCaching.Bus.FreeRedis.csproj", "{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.Bus.FreeRedis.Tests", "tests\EasyCaching.Bus.FreeRedis.Tests\EasyCaching.Bus.FreeRedis.Tests.csproj", "{2712CDAD-713D-4767-AE39-6FAA6115D9A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{925BA316-CE38-4051-B2E9-CAFC7F524D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{925BA316-CE38-4051-B2E9-CAFC7F524D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{925BA316-CE38-4051-B2E9-CAFC7F524D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +53,8 @@ Global
 		{32C59B57-FADA-460B-A02C-926C0815A107} = {51B59C2F-8D4A-4096-B830-7937DF3DBF87}
 		{96DD4331-8B12-405F-8CB4-23D3776916AC} = {2A6FB3DC-B657-4ADC-93F4-47888EE98F9E}
 		{925BA316-CE38-4051-B2E9-CAFC7F524D56} = {9E00FF89-215B-495E-9CAE-35B244224EEC}
+		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5} = {51B59C2F-8D4A-4096-B830-7937DF3DBF87}
+		{2712CDAD-713D-4767-AE39-6FAA6115D9A6} = {9E00FF89-215B-495E-9CAE-35B244224EEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {30677E46-019F-435E-8CF9-613F1A96623B}
