@@ -1,4 +1,4 @@
-﻿namespace EasyCaching.Bus.FreeRedis.Configurations
+﻿namespace EasyCaching.Bus.FreeRedis
 {
     using System;
     using System.Collections.Generic;
