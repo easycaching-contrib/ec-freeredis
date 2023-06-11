@@ -24,13 +24,19 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="T:EasyCaching.Bus.FreeRedis.DefaultFreeRedisBus"/> class.
         /// </summary>
-        /// <param name="clients"></param>
-        /// <param name="serializer">Serializer</param>
-        public DefaultFreeRedisBus(IEnumerable<EasyCachingFreeRedisClient> clients, IEasyCachingSerializer serializer)
+        /// <param name="name">Name.</param>
+        /// <param name="clients">Clients.</param>
+        /// <param name="busOptions">bus Options.</param>
+        /// <param name="serializers">Serializer</param>
+        public DefaultFreeRedisBus(
+            string name
+            , IEnumerable<EasyCachingFreeRedisClient> clients
+            , FreeRedisBusOptions busOptions
+            , IEnumerable<IEasyCachingSerializer> serializers)
         {
-            _serializer = serializer;
-            this.BusName = "easycachingbus";
-            this._client = clients.FirstOrDefault(x => x.Name.Equals("easycachingbus"));
+            this._client = clients.FirstOrDefault(x => x.Name.Equals(name));
+            this._serializer = serializers.FirstOrDefault(x => x.Name.Equals(busOptions.SerializerName));
+            if (this._serializer == null) throw new EasyCachingNotFoundException(string.Format(EasyCachingConstValue.NotFoundSerExceptionMessage, busOptions.SerializerName));
         }
 
         /// <summary>

@@ -3,18 +3,20 @@
     using EasyCaching.Core;
     using EasyCaching.Core.Bus;
     using EasyCaching.Core.Configurations;
+    using EasyCaching.Core.Serialization;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Options;
     using System;
     using System.Linq;
+    using System.Xml.Linq;
 
     public class FreeRedisOptionsExtension : IEasyCachingOptionsExtension
     {
         /// <summary>
         /// The name.
         /// </summary>
-        private const string _name = "easycachingbus";
+        private readonly string _name;
 
         /// <summary>
         /// The configure.
@@ -22,11 +24,13 @@
         private readonly Action<FreeRedisBusOptions> _configure;
 
         /// <summary>
+        /// <param name="name">Name.</param>
         /// Initializes a new instance of the <see cref="T:EasyCaching.Bus.FreeRedis.Configurations.FreeRedisBusOptions"/> class.
         /// </summary>        
         /// <param name="configure">Configure.</param>
-        public FreeRedisOptionsExtension(Action<FreeRedisBusOptions> configure)
+        public FreeRedisOptionsExtension(string name, Action<FreeRedisBusOptions> configure)
         {
+            this._name = name;
             this._configure = configure;
         }
 
@@ -35,7 +39,6 @@
         {
             services.AddOptions();
             services.Configure(_name, _configure);
-
             services.TryAddSingleton<IEasyCachingProviderFactory, DefaultEasyCachingProviderFactory>();
 
             services.AddSingleton<EasyCachingFreeRedisClient>(x =>
@@ -70,7 +73,14 @@
                 }
             });
 
-            services.AddSingleton<IEasyCachingBus, DefaultFreeRedisBus>();
+            services.AddSingleton<IEasyCachingBus, DefaultFreeRedisBus>(x =>
+            {
+                var clients = x.GetServices<EasyCachingFreeRedisClient>();
+                var optionsMon = x.GetRequiredService<IOptionsMonitor<FreeRedisBusOptions>>();
+                var options = optionsMon.Get(_name);
+                var serializers = x.GetServices<IEasyCachingSerializer>();
+                return new DefaultFreeRedisBus(_name, clients, options, serializers);
+            });
         }
     }
 }

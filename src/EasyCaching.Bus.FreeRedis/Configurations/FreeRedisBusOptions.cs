@@ -34,5 +34,10 @@
         /// Gets or sets the Redis database KeyPrefix will use.
         /// </summary>
         public string KeyPrefix { get; set; }
+
+        /// <summary>
+        /// Gets or sets the serializer name that should be use in this bus.
+        /// </summary>
+        public string SerializerName { get; set; }
     }
 }
