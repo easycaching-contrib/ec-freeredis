@@ -20,7 +20,7 @@ public class FreeRedisCachingBusTest
             {
                 config.ConnectionStrings = new List<ConnectionStringBuilder>
                 {
-                    "192.168.3.86:6379,defaultDatabase=6,poolsize=10"
+                    "127.0.0.1,defaultDatabase=6,poolsize=10"
                 };
                 config.SerializerName = "json";
             });
@@ -45,7 +45,7 @@ public class FreeRedisCachingBusTest
             {
                 config.ConnectionStrings = new List<ConnectionStringBuilder>
                 {
-                    "192.168.3.86:6379,defaultDatabase=6,poolsize=10"
+                    "127.0.0.1,defaultDatabase=6,poolsize=10"
                 };
             });
         });
