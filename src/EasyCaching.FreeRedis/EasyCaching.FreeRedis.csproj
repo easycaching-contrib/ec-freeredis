@@ -1,6 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../../build/version.props" />
+	<Import Project="../../build/releasenotes.props" />
+	
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<Description>
+			A simple distributed caching provider based on freeredis.
+		</Description>
+		<PackageTags>Redis,DistributedCache,Caching,Cache</PackageTags>
+		<VersionPrefix>$(EasyCachingFreeRedisPackageVersion)</VersionPrefix>
+		<VersionSuffix></VersionSuffix>
+		<Owners>ncc;Catcher Wong</Owners>
+		<Authors>ncc;Catcher Wong</Authors>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<LangVersion>latest</LangVersion>
+		<PackageProjectUrl>https://github.com/easycaching-contrib/ec-freeredis</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/easycaching-contrib/ec-freeredis</RepositoryUrl>
+		<PackageIcon>nuget-icon.png</PackageIcon>
+		<PackageReleaseNotes>
+			$(EasyCachingFreeRedisPackageNotes)
+		</PackageReleaseNotes>
+
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
