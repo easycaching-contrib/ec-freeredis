@@ -20,7 +20,7 @@ public class FreeRedisCachingBusTest
             {
                 config.ConnectionStrings = new List<ConnectionStringBuilder>
                 {
-                    "127.0.0.1,defaultDatabase=6,poolsize=10"
+                    "192.168.3.86:6379,defaultDatabase=6,poolsize=10"
                 };
                 config.SerializerName = "json";
             });
@@ -45,12 +45,12 @@ public class FreeRedisCachingBusTest
             {
                 config.ConnectionStrings = new List<ConnectionStringBuilder>
                 {
-                    "127.0.0.1,defaultDatabase=6,poolsize=10"
+                    "192.168.3.86:6379,defaultDatabase=6,poolsize=10"
                 };
             });
         });
         IServiceProvider serviceProvider = services.BuildServiceProvider();
-        var client = serviceProvider.GetService<EasyCachingFreeRedisClient>();
+        var client = serviceProvider.GetService<Bus.FreeRedis.EasyCachingFreeRedisClient>();
         Assert.NotNull(client);
 
         var flag = client.Ping();
