@@ -24,6 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\EasyCaching.Bus.FreeRedis\EasyCaching.Bus.FreeRedis.csproj" />
 		<ProjectReference Include="..\..\src\EasyCaching.FreeRedis\EasyCaching.FreeRedis.csproj" />
 	</ItemGroup>
 

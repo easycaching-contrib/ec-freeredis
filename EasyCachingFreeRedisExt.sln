@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.FreeRedis.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.Bus.FreeRedis", "src\EasyCaching.Bus.FreeRedis\EasyCaching.Bus.FreeRedis.csproj", "{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCaching.Bus.FreeRedis.Tests", "tests\EasyCaching.Bus.FreeRedis.Tests\EasyCaching.Bus.FreeRedis.Tests.csproj", "{2712CDAD-713D-4767-AE39-6FAA6115D9A6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2712CDAD-713D-4767-AE39-6FAA6115D9A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,7 +48,6 @@ Global
 		{96DD4331-8B12-405F-8CB4-23D3776916AC} = {2A6FB3DC-B657-4ADC-93F4-47888EE98F9E}
 		{925BA316-CE38-4051-B2E9-CAFC7F524D56} = {9E00FF89-215B-495E-9CAE-35B244224EEC}
 		{AEB342AE-DA45-4AB5-9B55-4FF2AA7505E5} = {51B59C2F-8D4A-4096-B830-7937DF3DBF87}
-		{2712CDAD-713D-4767-AE39-6FAA6115D9A6} = {9E00FF89-215B-495E-9CAE-35B244224EEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {30677E46-019F-435E-8CF9-613F1A96623B}
