@@ -88,6 +88,8 @@ public class FreeRedisCachingBusTest
             () => { });
 
         await _bus.PublishAsync(Topic, message);
+
+        // wait for message
         await Task.Delay(1000);
         Assert.Equal(sendMsgCachkey, getMsgCachkey);
     }
