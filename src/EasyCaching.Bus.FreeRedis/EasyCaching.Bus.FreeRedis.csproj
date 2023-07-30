@@ -5,10 +5,10 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 		<Description>
-			A simple distributed caching provider based on freeredis.
+			A simple caching bus(message bus) based on freeredis.
 		</Description>
 		<PackageTags>Redis,DistributedCache,Caching,Cache</PackageTags>
-		<VersionPrefix>$(EasyCachingFreeRedisPackageVersion)</VersionPrefix>
+		<VersionPrefix>$(EasyCachingFreeRedisBusPackageVersion)</VersionPrefix>
 		<VersionSuffix></VersionSuffix>
 		<Owners>ncc;Catcher Wong</Owners>
 		<Authors>ncc;Catcher Wong</Authors>
@@ -19,7 +19,7 @@
 		<RepositoryUrl>https://github.com/easycaching-contrib/ec-freeredis</RepositoryUrl>
 		<PackageIcon>nuget-icon.png</PackageIcon>
 		<PackageReleaseNotes>
-			$(EasyCachingFreeRedisPackageNotes)
+			$(EasyCachingFreeRedisBusPackageNotes)
 		</PackageReleaseNotes>
 
 
@@ -28,12 +28,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FreeRedis" Version="1.0.8" />
+		<PackageReference Include="FreeRedis" Version="1.1.1" />
 		<PackageReference Include="EasyCaching.Core" Version="1.9.0" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<None Include="..\..\media\nuget-icon.png" Pack="true" Visible="false" PackagePath="" />
 	</ItemGroup>
-
 </Project>

@@ -1,7 +1,10 @@
 <Project>
 	<PropertyGroup>
 		<EasyCachingFreeRedisPackageNotes>
-		1. Accomplish cache by freeredis
+		1. Upgrading dependencies.
 		</EasyCachingFreeRedisPackageNotes>
+		<EasyCachingFreeRedisBusPackageNotes>
+		1. Accomplish bus by freeredis.
+		</EasyCachingFreeRedisBusPackageNotes>
 	</PropertyGroup>
 </Project>

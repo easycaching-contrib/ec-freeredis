@@ -1,5 +1,6 @@
 <Project>
 	<PropertyGroup>
 		<EasyCachingFreeRedisPackageVersion>1.9.0</EasyCachingFreeRedisPackageVersion>
+		<EasyCachingFreeRedisBusPackageVersion>1.9.0</EasyCachingFreeRedisBusPackageVersion>
 	</PropertyGroup>
 </Project>
